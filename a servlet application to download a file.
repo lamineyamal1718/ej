@@ -1,0 +1,46 @@
+Index.html:
+
+<html> 
+<head> 
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> <title>File Upload</title> 
+</head> 
+<body> 
+<form action="UploadServlet" method="post" enctype="multipart/form-data"> 
+Select File To Upload:- <input type="file" name="f1" > 
+Destination :- <input type="text" value="/tmp" name="destination"> 
+<br> 
+<input type="submit" value="Upload File" name="Upload"> </form> 
+</body> 
+</html> 
+
+UploadServlet.java:
+
+import java.io.*; 
+import javax.servlet.*; 
+import javax.servlet.annotation.MultipartConfig; 
+import javax.servlet.http.*; 
+@MultipartConfig 
+public class UploadServlet extends HttpServlet { 
+public void doPost(HttpServletRequest req,HttpServletResponse res)
+            throws IOException,ServletException { 
+res.setContentType("text/html"); 
+PrintWriter out = res.getWriter(); 
+String path=req.getParameter("destination"); 
+Part filePart = req.getPart("f1"); 
+String sfilePart = req.getPart("f1").toString(); 
+out.print("<br>FilePart:"+sfilePart); 
+String filename = filePart.getName().toString(); 
+out.print("<br><br><hr> File Name:- "+filename); 
+OutputStream os=null; 
+InputStream is=null; try 
+{ os=new FileOutputStream(new File(path+File.separator+filename)); 
+is=filePart.getInputStream(); int read=0; byte[] b=new byte[1024];
+while((read=is.read(b))!=-1) 
+{ os.write(b,0,read); 
+} 
+out.println("<br>file uploaded successfully...!!!"); 
+} catch(FileNotFoundException e) 
+{ out.print(e); 
+} 
+} 
+}
